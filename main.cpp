@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "intersections.h"
 
+
 #include "upcStatistical.h"
 #include "util.h"
 #include "fastbbf.h"
@@ -14,26 +15,11 @@
 
 using namespace std;
 
-/*
-const int n = 12323*2;
-const int r = n / 2;
-const int w = 142;// (int)sqrt(n);
-const int v = w/2;
-const int t = 134;
-*/
+int small_r = 4100;
+int out_of = 1;
+int only_key = 0;
 
 
-
-
-
-/*
-// just for test
-const int n = 6 * 2;
-const int r = n / 2;
-const int w = 4;// (int)sqrt(n);
-const int v = w / 2;
-const int t = 5;
-*/
 
 char poly1[r];
 char poly2[r];
@@ -159,8 +145,7 @@ int test_bbfast() {
 	//return blackGrayFlipFast()*10+ blackGrayFlip2Fast();
 	return blackGrayFlipFast();
 }
-int small_r = 4000;
-int out_of = 0;
+
 int test_bbfast_weak_key() {
 	
 	char init_err[n];
@@ -175,19 +160,11 @@ int test_bbfast_weak_key() {
 	getRandVec(poly1, r, 0);
 	getRandVec(poly2, r, 0);
 	//poly1[0] = 1;
-	/*
-	int wei_p1 = 0;
-	while (wei_p1 < v) {
-		int rd = rand() % (5000);
-		if (poly1[(3 * rd ) % r] == 0) {
-			poly1[(3 * rd ) % r] = 1;
-			wei_p1++;
-		}
-	}*/
-	getRandVec(&poly1[0], small_r, v-out_of);
+	
+	poly1[0] = 1;
+	getRandVec(&poly1[1], small_r-1, v-out_of-1);
 	getRandVec(&poly1[small_r], r - small_r,out_of);
-	//getRandVec(&poly2[0], 5000, v);
-	//getRandVec(&poly1[3000], 2500, v/2+1);
+	
 	
 	getRandVec(poly2, r, v);
 
@@ -204,31 +181,33 @@ int test_bbfast_weak_key() {
 	}
 	idx1[i1] = idx2[i2] = -1;
 	
-	/*
-	int idx1[] = { 10, 312, 351, 420, 542, 633, 1045, 1118, 1143, 1147, 1162, 1169, 1230, 1255, 1301, 1358, 1446, 1480, 1483, 1487, 1544, 1548, 1684, 1735, 1750, 1785, 1808, 1843, 1930, 1956, 1988, 2003, 2004, 2024, 2090, 2154, 2168, 2169, 2362, 2365, 2370, 2371, 2445, 2587, 2623, 2626, 2927, 3020, 3238, 3278, 3362, 3525, 3530, 3547, 3557, 3582, 3672, 3760, 3787, 3815, 3965, 3966, 4056, 4313, 4316, 4501, 4516, 4576, 4585, 4657, 4776,-1 };
-	int idx2[] = { 264, 491, 508, 836, 879, 887, 1342, 1372, 1691, 2056, 2065, 2139, 2186, 2287, 2336, 2355, 2367, 2568, 2690, 2784, 2886, 2920, 3033, 3047, 3258, 3292, 3331, 3461, 3519, 3694, 3907, 4005, 4040, 4090, 4113, 4244, 4550, 4651, 4812, 4817, 4934, 4984, 5118, 5137, 5165, 5198, 5280, 5696, 5776, 6156, 6321, 6770, 6931, 7007, 7054, 7236, 7738, 8148, 8690, 8711, 8979, 9061, 9313, 9828, 10190, 10403, 11148, 11285, 11430, 11452, 11776 ,-1 };
-	getRandVec(poly1, r, 0);
-	getRandVec(poly2, r, 0);
-	for (int i = 0; i < v; i++) {
-		poly1[idx1[i]] = poly2[idx2[i]] = 1;
-	}*/
+	
+	
+	if (only_key) {
+		getRandVec(init_err, n, t);
+	}
+	else {
+		init_err[0] = 1;
+		getRandVec(&init_err[1], small_r - 1, t/2 - out_of - 1);
+		getRandVec(&init_err[small_r], r - small_r, out_of);
+		getRandVec(&init_err[r], r, t / 2);
+	}
 
-	getRandVec(init_err, n, 0);
-	getRandVec(&init_err[0], small_r, t/2-out_of);
-	getRandVec(&init_err[small_r], r - small_r, out_of);
-	//getRandVec(&init_err[3000], 2500, t / 2 / 2 + 1);
-	/*
-	int wei_er = 0;
-	while (wei_er < t/2) {
-		int rd = rand() % (5000);
-		if (init_err[(3 * rd + 1)%r] == 0) {
-			init_err[(3 * rd + 1) % r] = 1;
-			wei_er++;
-		}
-	}*/
+	int err_idx[2000];
+	int err_bg = 0;
+	for (int i = 0; i < r; i++) {
+		if (init_err[i] == 1)err_idx[err_bg++] = i;
+	}
+	int err_mid = err_bg;
+	for (int i = r; i < n; i++) {
+		if (init_err[i] == 1)err_idx[err_mid++] = i;
+	}
+	
 
 
-	getRandVec(&init_err[r], r, t / 2);
+
+	//getRandVec(&init_err[r], r, t / 2);
+	//small_r=old_smallr;
 
 	// dbg input
 	/*getRandVec(init_err, n, 0);
@@ -237,15 +216,51 @@ int test_bbfast_weak_key() {
 
 	matrixMultFast(idx1, idx2, init_err, init_synd, r);
 	int res1= blackGrayFlipFast();
+	int res2 = res1;
+	if (res1 == 0) {
+		cout << "poly1:" << endl;
+		for (int i = 0; i < v; i++) {
+			cout << idx1[i] << ",";
+		}
+		cout <<endl<< "poly2:" << endl;
+		for (int i = 0; i < v; i++) {
+			cout << idx2[i] << ",";
+		}
+		cout << endl<<"err:" << endl;
+		for (int i = 0; i < t; i++) {
+			cout << err_idx[i] << ",";
+		}cout << endl;
 
-	//getRandVec(init_err, n, 0);
-	//init_err[0] = 1;
-	//getRandVec(&init_err[1], small_r - 1, t-1);
-	//matrixMultFast(idx1, idx2, init_err, init_synd, r);
-	//int res2 = blackGrayFlipFast();
-	
+		//eps=1
+		int d = err_idx[err_bg - 1];
+		int a = err_idx[1];
+		int c = err_idx[err_bg - 2];
+		int b = err_idx[err_bg - 3];
+		if (d - a < small_r || (b + r - d)<small_r) {
+			cout << "bad one error" << endl;
+			res2 = 1;
+		}
+		else {
+			cout << "good one error" << endl;
+		}
+
+		d = idx1[v - 1];
+		a = idx1[1];
+		c = idx1[v - 2];
+		b = idx1[v - 3];
+		if (d - a < small_r || (b + r - d)<small_r) {
+			cout << "bad one key" << endl;
+			res2 = 1;
+		}
+		else {
+			cout << "good one key" << endl;
+		}
+	}
+
+
 	// change
-	return res1 * 10 + res1;
+	return res1 * 10 + res2;
+	
 }
 
 int test_bb() {
@@ -734,6 +749,7 @@ int testIntersUnion() {
 }
 
 
+
 void printFlipNum() {
 	cout << "print Flip Num" << endl;
 	for (int i = 0; i < r; i++) {
@@ -788,7 +804,6 @@ void printErrWei() {
 }
 
 
-
 int main() {
 	srand((unsigned int)time(NULL));
 	
@@ -824,10 +839,14 @@ int main() {
 
 	int tot=0;
 	int numProcs = omp_get_num_procs();
+	//numProcs /= 4;
 	cout<<"out of="<<out_of<<endl;
 	cout<<"using "<<numProcs<<" cores"<<endl;
-	#pragma omp parallel for  num_threads(numProcs)
-	for (int i = 1; i <= 10000000; i++) {
+
+	volatile bool flag= false;
+	#pragma omp parallel for  shared(flag) num_threads(numProcs)
+	for (int i = 1; i <= 500000000; i++) {
+		if(flag)continue;
 		int res = test_bbfast_weak_key();
 		#pragma omp critical 
 		{
@@ -835,14 +854,12 @@ int main() {
 		//succ1 += res;
 		succ1 += res / 10;
 		succ2 += res % 10; 
-		}
+		if(tot-succ1 >= 16)flag=true;;
 		if (tot % 10000 == 0 || tot==100 || tot==1000||tot==2000||tot==5000) {
-			cout << "tot=" << tot << " succ=" << succ1  << endl;
+			cout << "tot=" << tot << " succ1=" << succ1 << " succ2=" << succ2 << endl;
 			//cout << "i=" << i << "succ=" << succ1 << endl;
 		}
-		if (0 && i % 1000 == 0) {
-			printTwoNum();
-			printOneNum();
+
 		}
 	}
 	//printFlipNum();
@@ -862,6 +879,8 @@ int main() {
 		initAll();
 		upcStatistical(poly1, poly2, t, r);
 	}*/
+	cout << "-------------------------\ntot=" << tot << " succ1=" << succ1 << " succ2=" << succ2 << endl;
+			
 	system("pause");
 	return 0;
 }
