@@ -15,9 +15,11 @@
 
 using namespace std;
 
-int small_r = 4100;
+int small_r = 4000;
 int out_of = 1;
 int only_key = 0;
+int tot_rand = 0;
+int rand_err = 0;
 
 
 
@@ -163,11 +165,13 @@ int test_bbfast_weak_key() {
 	
 	poly1[0] = 1;
 	getRandVec(&poly1[1], small_r-1, v-out_of-1);
-	getRandVec(&poly1[small_r], r - small_r,out_of);
+	if(small_r<r)getRandVec(&poly1[small_r], r - small_r,out_of);
 	
 	
 	getRandVec(poly2, r, v);
-
+	if(tot_rand){
+		getRandVec(poly1,r,v);
+	}
 
 	// dbg input
 
@@ -192,6 +196,17 @@ int test_bbfast_weak_key() {
 		getRandVec(&init_err[small_r], r - small_r, out_of);
 		getRandVec(&init_err[r], r, t / 2);
 	}
+	if(tot_rand){
+		init_err[0] = 1;
+		getRandVec(&init_err[1], small_r - 1, t/2 - out_of - 1);
+		getRandVec(&init_err[small_r], r - small_r, out_of);
+		getRandVec(&init_err[r], r, t / 2);
+	}
+	if(rand_err){
+		getRandVec(init_err,n,t);
+	}
+
+	
 
 	int err_idx[2000];
 	int err_bg = 0;
@@ -219,9 +234,13 @@ int test_bbfast_weak_key() {
 	int res2 = res1;
 	if (res1 == 0) {
 		cout << "poly1:" << endl;
+		int xxx=-1000000;
 		for (int i = 0; i < v; i++) {
 			cout << idx1[i] << ",";
+			if(xxx<= ( (r-idx1[i] + idx1[(i+1)%v])%r  )           )xxx=(r-idx1[i] + idx1[(i+1)%v])%r;
 		}
+		
+		cout<<endl<<"width of poly1:"<<r-xxx<<endl;
 		cout <<endl<< "poly2:" << endl;
 		for (int i = 0; i < v; i++) {
 			cout << idx2[i] << ",";
@@ -845,7 +864,7 @@ int main() {
 
 	volatile bool flag= false;
 	#pragma omp parallel for  shared(flag) num_threads(numProcs)
-	for (int i = 1; i <= 500000000; i++) {
+	for (long long i = 1; i <= 50000000000; i++) {
 		if(flag)continue;
 		int res = test_bbfast_weak_key();
 		#pragma omp critical 
@@ -854,8 +873,9 @@ int main() {
 		//succ1 += res;
 		succ1 += res / 10;
 		succ2 += res % 10; 
-		if(tot-succ1 >= 16)flag=true;;
-		if (tot % 10000 == 0 || tot==100 || tot==1000||tot==2000||tot==5000) {
+		if(tot-succ1 >= 16*1000)flag=true;;
+		if (tot % 100000 == 0 || tot==100 || tot==1000||tot==2000||tot==5000) {
+			cout<<"????--------------------------"<<endl;
 			cout << "tot=" << tot << " succ1=" << succ1 << " succ2=" << succ2 << endl;
 			//cout << "i=" << i << "succ=" << succ1 << endl;
 		}

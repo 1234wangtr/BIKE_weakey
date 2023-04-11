@@ -52,12 +52,19 @@ void vectorAdd(char a[], char b[], char c[], int length) {
 
 
 void getRandVec(char a[],int len, int weight) {
+	long long maxi = 1<<30;
+	maxi *= 2;
+	maxi -= maxi%len;
+	int imaxi = maxi;
+	//cout<<"len="<<len<<" imaxi="<<imaxi<<endl;
+
 	for (int i = 0; i < len; i++) {
 		a[i] = 0;
 	}
 	int sum = 0;
 	while (sum < weight) {
 		int rd = rand()%len;
+		if(rd>imaxi)continue;
 		if (a[rd] == 0) {
 			a[rd] = 1;
 			sum++;

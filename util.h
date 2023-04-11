@@ -1,7 +1,7 @@
 #pragma once
 #include <omp.h>
 
-const int n = 12323 * 2;
+const int n = 12323* 2;
 const int r = n / 2;
 const int w = 142;// (int)sqrt(n);
 const int v = w / 2;
