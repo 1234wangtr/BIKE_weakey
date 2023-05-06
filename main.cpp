@@ -15,11 +15,11 @@
 
 using namespace std;
 
-int small_r = 4000;
+int small_r = 4100;
 int out_of = 1;
-int only_key = 0;
-int tot_rand = 0;
-int rand_err = 0;
+int only_key = 0;	// set only_key=1 iff key is special and error is rand
+int tot_rand = 0;	// set tot_rand=1 iff key is rand and error is special (the DFR is almost average DFR)
+int rand_err = 0;	// set rand_err=1 iff err is rand
 
 
 
@@ -220,14 +220,6 @@ int test_bbfast_weak_key() {
 	
 
 
-
-	//getRandVec(&init_err[r], r, t / 2);
-	//small_r=old_smallr;
-
-	// dbg input
-	/*getRandVec(init_err, n, 0);
-	int err_idx[] = { 4, 72, 153, 168, 211, 253, 318, 327, 382, 387, 431, 440, 499, 566, 592, 681, 849, 856, 936, 1083, 1213, 1261, 1346, 1380, 1467, 1470, 1489, 1634, 1686, 1727, 1781, 1805, 1807, 1901, 2031, 2081, 2197, 2483, 2523, 2586, 2679, 2735, 2745, 2754, 2847, 2915, 3328, 3331, 3426, 3498, 3568, 3578, 3706, 3731, 3877, 3964, 4052, 4132, 4306, 4521, 4689, 4719, 4778, 4873, 4886, 4917, 4996, 12452, 12487, 12518, 12657, 12906, 13302, 13547, 13663, 13695, 13861, 14045, 14185, 14325, 14391, 14637, 14689, 14878, 15235, 15392, 16113, 16116, 16407, 16647, 16650, 16662, 16759, 17050, 17150, 17315, 17392, 17481, 17626, 17710, 18501, 18546, 18861, 18954, 19001, 19733, 19872, 20012, 20129, 20187, 20210, 20245, 20273, 20300, 20927, 20941, 21133, 21585, 21751, 21815, 21903, 22222, 22704, 22736, 22787, 22874, 23018, 23077, 23137, 23269, 23448, 23627, 23799, 24145 };
-	for (int i = 0; i < t; i++)init_err[err_idx[i]] = 1;*/
 
 	matrixMultFast(idx1, idx2, init_err, init_synd, r);
 	int res1= blackGrayFlipFast();
