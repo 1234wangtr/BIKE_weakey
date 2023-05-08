@@ -165,7 +165,11 @@ int test_bbfast_weak_key() {
 	
 	poly1[0] = 1;
 	getRandVec(&poly1[1], small_r-1, v-out_of-1);
-	if(small_r<r)getRandVec(&poly1[small_r], r - small_r,out_of);
+	int last_idx=0;
+	for(int i=0;i<small_r;i++){
+		if(poly1[i]){last_idx=i;};
+	}
+	if(small_r<r)getRandVec(&poly1[last_idx+1], r - last_idx - 1,out_of);
 	
 	
 	getRandVec(poly2, r, v);
@@ -193,13 +197,21 @@ int test_bbfast_weak_key() {
 	else {
 		init_err[0] = 1;
 		getRandVec(&init_err[1], small_r - 1, t/2 - out_of - 1);
-		getRandVec(&init_err[small_r], r - small_r, out_of);
+		int last_idx=0;
+		for(int i=0;i<small_r;i++){
+			if(init_err[i]){last_idx=i;};
+		}
+		getRandVec(&init_err[last_idx+1], r - last_idx - 1, out_of);
 		getRandVec(&init_err[r], r, t / 2);
 	}
 	if(tot_rand){
 		init_err[0] = 1;
 		getRandVec(&init_err[1], small_r - 1, t/2 - out_of - 1);
-		getRandVec(&init_err[small_r], r - small_r, out_of);
+		int last_idx=0;
+		for(int i=0;i<small_r;i++){
+			if(poly1[i]){last_idx=i;};
+		}
+		getRandVec(&init_err[last_idx+1], r - last_idx-1, out_of);
 		getRandVec(&init_err[r], r, t / 2);
 	}
 	if(rand_err){
